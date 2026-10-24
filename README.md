@@ -8,12 +8,13 @@ Built for the **Devpost Learn: Build With AI: Basics** hackathon using a plan-fi
 
 ## ✨ Features
 
-- **Deterministic Date Resolution:** Anchors relative date/time terms (*"tomorrow 2 PM"*, *"Friday evening"*, *"Monday 10 AM"*) to the client's current timestamp and local timezone.
+- **Deterministic Date Resolution:** Anchors relative date/time terms (_"tomorrow 2 PM"_, _"Friday evening"_, _"Monday 10 AM"_) to the client's current timestamp and local timezone.
 - **Spec-Compliant Calendar Generation:** Zero external calendar packages. Features a pure client-side RFC 5545 `.ics` generator with CRLF (`\r\n`) line endings, UTC/local date formatting, all-day `VALUE=DATE` syntax, and multi-event bundling.
 - **Prioritized Action Items:** Automatically filters out document headers/meeting titles and classifies true actionable items into `High`, `Medium`, and `Low` priority badges.
 - **Interactive Checklists & Markdown Export:** Interactive checkboxes allow toggling task completion status, with a 1-click **Copy as Markdown** button formatted with `- [x]` or `- [ ]` for Jira, Linear, or GitHub issues.
 - **Zero OAuth Friction:** No third-party accounts, calendar API keys, or permissions required. Generates standard `.ics` files that import natively into Google Calendar, Apple Calendar, Outlook, and desktop Linux calendars (KOrganizer, GNOME Calendar).
-- **Fast Mode UI:** Distraction-free, responsive dark interface inspired by Linear and Raycast, complete with an instant 1-click sample loader for rapid testing.
+- **Multi-Scenario Sample Presets:** Built-in quick selectors for diverse real-world formats: structured **Engineering Syncs** (sprint deadlines), unstructured **Messy Chats** (WhatsApp/Slack conversation dumps), and streaming **Brain Dumps** (long-term untimed tasks).
+- **Fast Mode UI:** Distraction-free, responsive dark interface inspired by Linear and Raycast with instant sample loading and zero-friction note processing.
 
 ---
 
@@ -77,6 +78,7 @@ bun test tests/ics.test.ts
 ```
 
 Expected output:
+
 ```text
 ✓ escapes special characters correctly according to RFC 5545
 ✓ formats UTC and Date-only timestamps correctly

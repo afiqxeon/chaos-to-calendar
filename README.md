@@ -1,21 +1,24 @@
-# Chaos-to-Calendar
+# Chaos-to-Calendar 🗓️⚡
 
-A micro-app that transforms chaotic meeting notes, brain dumps, and voice transcripts into prioritized actionable tasks and one-click downloadable RFC 5545 `.ics` calendar events.
+A privacy-first micro-app that transforms messy meeting notes, brain dumps, and transcripts into prioritized actionable checklists and one-click downloadable RFC 5545 `.ics` calendar events.
 
-Built for the **Devpost Learn: Build With AI: Basics** hackathon.
-
----
-
-## Features
-- **Deterministic Date Resolution:** Anchors relative date/time terms ("tomorrow 2 PM", "Friday evening", "Monday 10 AM") using client reference timestamps and timezone.
-- **Spec-Compliant Calendar Generation:** Zero external calendar packages; pure client-side RFC 5545 `.ics` generator with CRLF (`\r\n`) endings, all-day `VALUE=DATE` formatting, and multi-event bundling.
-- **Prioritized Action Items:** Automatically groups tasks by priority (`High`, `Medium`, `Low`) with 1-click "Copy as Markdown" for task trackers (Jira, Linear, GitHub issues).
-- **Zero OAuth Friction:** No third-party accounts, calendar API keys, or permissions required. Generates standard `.ics` files that import natively into Google Calendar, Apple Calendar, and Outlook.
-- **Fast Mode UI:** Responsive, distraction-free dark interface with instant 1-click sample loader for rapid testing.
+Built for the **Devpost Learn: Build With AI: Basics** hackathon using a plan-first, spec-driven development methodology.
 
 ---
 
-## Tech Stack
+## ✨ Features
+
+- **Deterministic Date Resolution:** Anchors relative date/time terms (*"tomorrow 2 PM"*, *"Friday evening"*, *"Monday 10 AM"*) to the client's current timestamp and local timezone.
+- **Spec-Compliant Calendar Generation:** Zero external calendar packages. Features a pure client-side RFC 5545 `.ics` generator with CRLF (`\r\n`) line endings, UTC/local date formatting, all-day `VALUE=DATE` syntax, and multi-event bundling.
+- **Prioritized Action Items:** Automatically filters out document headers/meeting titles and classifies true actionable items into `High`, `Medium`, and `Low` priority badges.
+- **Interactive Checklists & Markdown Export:** Interactive checkboxes allow toggling task completion status, with a 1-click **Copy as Markdown** button formatted with `- [x]` or `- [ ]` for Jira, Linear, or GitHub issues.
+- **Zero OAuth Friction:** No third-party accounts, calendar API keys, or permissions required. Generates standard `.ics` files that import natively into Google Calendar, Apple Calendar, Outlook, and desktop Linux calendars (KOrganizer, GNOME Calendar).
+- **Fast Mode UI:** Distraction-free, responsive dark interface inspired by Linear and Raycast, complete with an instant 1-click sample loader for rapid testing.
+
+---
+
+## 🛠️ Tech Stack
+
 - **Runtime:** [Bun](https://bun.sh/)
 - **Frontend:** [React](https://react.dev/), [Vite](https://vitejs.dev/), [Tailwind CSS](https://tailwindcss.com/)
 - **Backend API:** Native `Bun.serve` on port 3001
@@ -24,42 +27,73 @@ Built for the **Devpost Learn: Build With AI: Basics** hackathon.
 
 ---
 
-## Quickstart
+## 🚀 Quickstart
 
 ### Prerequisites
-- [Bun](https://bun.sh/) installed (v1.0+)
 
-### 1. Install Dependencies
+- [Bun](https://bun.sh/) installed (`v1.0+`)
+
+### 1. Clone & Install Dependencies
+
 ```bash
+git clone https://github.com/afiqxeon/chaos-to-calendar.git
+cd chaos-to-calendar
 bun install
 ```
 
-### 2. Start the Backend API Server
+### 2. Configure Environment
+
+Create a `.env` file in the root directory:
+
+```env
+ANTHROPIC_AUTH_TOKEN=your_token_here
+# Optional: ANTHROPIC_BASE_URL if using a custom gateway
+```
+
+### 3. Start the Backend API Server
+
 ```bash
 bun run server.ts
 ```
-API server runs on `http://localhost:3001`.
 
-### 3. Start the Frontend Dev Server
-In a separate terminal:
+The API server runs on `http://localhost:3001` (handling `/api/process` requests with Zod schema validation).
+
+### 4. Start the Frontend Dev Server
+
+In a separate terminal tab:
+
 ```bash
 bun run dev --host
 ```
+
 Open **[http://localhost:5173](http://localhost:5173)** in your browser.
 
-### 4. Run Automated Unit Tests
-Verify RFC 5545 calendar compliance:
+### 5. Run Automated Unit Tests
+
+Verify strict RFC 5545 calendar compliance:
+
 ```bash
-bun test
+bun test tests/ics.test.ts
+```
+
+Expected output:
+```text
+✓ escapes special characters correctly according to RFC 5545
+✓ formats UTC and Date-only timestamps correctly
+✓ generates a strictly compliant single timed event with CRLF line endings
+✓ generates valid All-Day events with VALUE=DATE parameters
+✓ bundles multiple events in a single VCALENDAR document
+5 pass, 0 fail
 ```
 
 ---
 
-## Architecture & Planning Artifacts
-All course planning documents and design artifacts are located under `devpost/`:
+## 📋 Architecture & Planning Artifacts
+
+All course planning documents, architecture boundaries, and design artifacts are located under `devpost/`:
+
 - `devpost/scope.md`: Proof-of-concept boundaries and core kernel definition
 - `devpost/prd.md`: Product requirements, user journey, and edge cases
 - `devpost/spec.md`: Technical specification and data schemas
 - `devpost/checklist.md`: Verified incremental build slices and progress state
 - `devpost/app-map.html`: Standalone architecture map and code tour snapshot
-

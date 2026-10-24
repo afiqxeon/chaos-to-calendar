@@ -62,3 +62,5 @@ Activity mode: [to be recorded upon completion]
 
 ## Revisions
 
+- Local server network binding and dual-route API resilience — Vite proxy ECONNREFUSED was caused by localhost resolving to IPv6 while Bun.serve was bound without explicit host, and the background server was in an isolated network namespace. Configured hostname "0.0.0.0", updated proxy target to 127.0.0.1, added a 3s timeout to external LLM calls to prevent hanging, and added direct backend fallback in App.tsx.
+

@@ -143,6 +143,7 @@ function extractWithRuleEngine(
  */
 const server = Bun.serve({
   port: PORT,
+  hostname: "0.0.0.0",
   async fetch(req) {
     const url = new URL(req.url);
 
@@ -231,6 +232,7 @@ RULES:
 
             const response = await fetch(`${baseUrl}/v1/messages`, {
               method: "POST",
+              signal: AbortSignal.timeout(3000),
               headers: {
                 "Content-Type": "application/json",
                 "x-api-key": apiKey,
@@ -296,3 +298,4 @@ RULES:
 });
 
 console.log(`Chaos-to-Calendar API server listening on http://localhost:${PORT}`);
+

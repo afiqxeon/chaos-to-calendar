@@ -119,3 +119,4 @@ export const NoteInputArea: React.FC<NoteInputAreaProps> = ({
     </div>
   );
 };
+

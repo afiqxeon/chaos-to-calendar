@@ -33,15 +33,33 @@ export const App: React.FC = () => {
       const anchorTimestamp = new Date().toISOString();
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 
-      const res = await fetch("/api/process", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          notes: trimmed,
-          anchorTimestamp,
-          timezone
-        })
+      const payload = JSON.stringify({
+        notes: trimmed,
+        anchorTimestamp,
+        timezone
       });
+
+      let res: Response;
+      try {
+        res = await fetch("/api/process", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: payload
+        });
+        if (!res.ok && res.status >= 500) {
+          res = await fetch("http://127.0.0.1:3001/api/process", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: payload
+          });
+        }
+      } catch (proxyErr) {
+        res = await fetch("http://127.0.0.1:3001/api/process", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: payload
+        });
+      }
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
@@ -134,3 +152,4 @@ export const App: React.FC = () => {
     </div>
   );
 };
+

@@ -29,7 +29,7 @@ Build mode: fast
   Learner check: Review the extracted JSON payload to confirm accurate relative date resolution.
   Commit: `Add Bun API server with Zod structured output extraction`
 
-- [ ] **3. Complete Interactive UI with Sample Loader, Task List, and Calendar Cards**
+- [x] **3. Complete Interactive UI with Sample Loader, Task List, and Calendar Cards**
   Becomes usable: Full single-page web app at `http://localhost:5173`. Users can load sample notes, run extraction, view prioritized task checklist with 1-click Markdown copy, view event cards, and download individual or bundled `.ics` files.
   Why now: Assembles the verified components and backend into the final user experience with the dark Linear/Raycast aesthetic.
   PRD ref: `prd.md > The Core Journey`, `prd.md > Screens and Layout`, `prd.md > Look and Feel`

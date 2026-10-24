@@ -16,6 +16,12 @@ export const App: React.FC = () => {
   const [hasProcessed, setHasProcessed] = useState<boolean>(false);
   const [source, setSource] = useState<string | null>(null);
 
+  const handleToggleTask = (id: string) => {
+    setTasks(prev =>
+      prev.map(task => (task.id === id ? { ...task, completed: !task.completed } : task))
+    );
+  };
+
   const handleProcessNotes = async () => {
     const trimmed = notes.trim();
     const words = trimmed ? trimmed.split(/\s+/).length : 0;
@@ -139,7 +145,7 @@ export const App: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[380px]">
-              <ActionItemsList tasks={tasks} />
+              <ActionItemsList tasks={tasks} onToggleTask={handleToggleTask} />
               <CalendarEventsList events={events} />
             </div>
           </div>

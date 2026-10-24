@@ -4,7 +4,8 @@ export const ActionTaskSchema = z.object({
   id: z.string(),
   title: z.string(),
   priority: z.enum(["High", "Medium", "Low"]),
-  reasoning: z.string().optional()
+  reasoning: z.string().optional(),
+  completed: z.boolean().optional()
 });
 
 export const CalendarEventSchema = z.object({

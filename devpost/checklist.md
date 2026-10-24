@@ -9,7 +9,7 @@ Build mode: fast
 
 ## Slices
 
-- [ ] **1. Scaffold project and verify RFC 5545 .ics generator with unit tests**
+- [x] **1. Scaffold project and verify RFC 5545 .ics generator with unit tests**
   Becomes usable: Running project foundation with an RFC 5545 `.ics` generator in `src/utils/ics.ts` verified by automated unit tests asserting proper CRLF endings, VCALENDAR wrapping, ISO/UTC timestamps, and all-day event formatting.
   Why now: Directly addresses the core risk and primary learning intention (zero drift on calendar specs) before investing in UI or API layers.
   PRD ref: `prd.md > Client-Side RFC 5545 .ics Generation`
@@ -19,7 +19,7 @@ Build mode: fast
   Learner check: Inspect the passing test suite output to confirm RFC 5545 calendar compliance.
   Commit: `Scaffold project and implement verified RFC 5545 calendar generator`
 
-- [ ] **2. Backend API with Anchor Timestamp and Zod Structured Schema Validation**
+- [x] **2. Backend API with Anchor Timestamp and Zod Structured Schema Validation**
   Becomes usable: A running local server on port 3001 exposing `POST /api/process` that accepts notes, anchors relative dates with client timestamps, prompts the LLM for structured JSON, and strictly validates outputs with Zod.
   Why now: Establishes the AI extraction pipeline and validates schema adherence before frontend integration.
   PRD ref: `prd.md > Note Ingestion & Validation`, `prd.md > Action Item Extraction & Prioritization`, `prd.md > Calendar Event Extraction & Normalization`
@@ -41,7 +41,7 @@ Build mode: fast
 
 ## Hands-on Checkpoints
 
-- [ ] Early usable behavior explored — Slice 1 RFC 5545 calendar generator test verification
+- [x] Early usable behavior explored — Slice 1 RFC 5545 calendar generator test verification
 - [ ] Final kick-the-tires exploration and feedback completed
 
 ## Final Review

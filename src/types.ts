@@ -27,3 +27,4 @@ export const ExtractionResponseSchema = z.object({
 export type ActionTask = z.infer<typeof ActionTaskSchema>;
 export type CalendarEvent = z.infer<typeof CalendarEventSchema>;
 export type ExtractionResponse = z.infer<typeof ExtractionResponseSchema>;
+

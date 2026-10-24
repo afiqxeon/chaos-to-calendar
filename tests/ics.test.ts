@@ -105,3 +105,4 @@ describe("RFC 5545 Calendar Generation Verification", () => {
     expect(ics).toContain("SUMMARY:[Deadline] Fix Bug");
   });
 });
+

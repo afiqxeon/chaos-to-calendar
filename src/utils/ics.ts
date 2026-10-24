@@ -103,3 +103,4 @@ export function downloadIcs(filename: string, events: CalendarEvent[]): void {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
+

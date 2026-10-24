@@ -27,29 +27,84 @@ function extractWithRuleEngine(
 
   let idCounter = 1;
 
+  const actionVerbs = [
+    "fix", "resolve", "patch", "debug",
+    "send", "email", "forward", "share",
+    "submit", "file", "upload",
+    "review", "audit", "check", "inspect",
+    "schedule", "hold", "host", "book", "set up",
+    "update", "edit", "revise", "rewrite",
+    "prepare", "draft", "write", "create",
+    "deploy", "release", "ship", "merge",
+    "discuss", "sync", "meet", "call"
+  ];
+
   for (const line of lines) {
     const lower = line.toLowerCase();
 
+    // Rule 1: Strictly ignore document titles, meeting headers, metadata, and lines ending with colons
+    if (
+      line.endsWith(":") ||
+      lower.startsWith("#") ||
+      lower.startsWith("title:") ||
+      lower.includes("meeting notes") ||
+      lower.includes("sprint wrap-up") ||
+      lower.includes("team sync notes") ||
+      lower.includes("agenda:") ||
+      lower.includes("attendees:") ||
+      lower.includes("todos:") ||
+      lower.includes("action items:")
+    ) {
+      continue;
+    }
+
+    const isBulleted = /^[-*•\d\.]+\s+/.test(line);
+    const cleanTitle = line.replace(/^[-*•\d\.]+\s*/, "").trim();
+    if (!cleanTitle) continue;
+
+    const lowerClean = cleanTitle.toLowerCase();
+
+    // Rule 2: Only extract actual actionable tasks containing an actionable verb, assignee, or explicit task
+    const hasActionVerb = actionVerbs.some(verb => 
+      new RegExp(`\\b${verb}\\b`, "i").test(lowerClean)
+    );
+    const hasAssignee = /^[A-Z][a-z]+\s+to\s+\w+/i.test(cleanTitle) || /\b(assigned to|owner:)/i.test(lowerClean);
+    const isExplicitTask = lowerClean.includes("todo") || lowerClean.includes("task") || lowerClean.includes("pr ") || lowerClean.includes("bug");
+
+    if (!isBulleted && !hasActionVerb && !hasAssignee && !isExplicitTask) {
+      continue;
+    }
+
     // Determine priority
     let priority: "High" | "Medium" | "Low" = "Medium";
-    if (lower.includes("urgent") || lower.includes("asap") || lower.includes("bug") || lower.includes("auth") || lower.includes("critical") || lower.includes("tomorrow")) {
+    if (
+      lower.includes("urgent") ||
+      lower.includes("asap") ||
+      lower.includes("bug") ||
+      lower.includes("auth") ||
+      lower.includes("critical") ||
+      lower.includes("tomorrow")
+    ) {
       priority = "High";
-    } else if (lower.includes("sync") || lower.includes("discuss") || lower.includes("proposal") || lower.includes("review")) {
+    } else if (
+      lower.includes("sync") ||
+      lower.includes("discuss") ||
+      lower.includes("proposal") ||
+      lower.includes("review") ||
+      lower.includes("sow")
+    ) {
       priority = "Medium";
     } else {
       priority = "Low";
     }
 
     // Add as action task
-    const cleanTitle = line.replace(/^[-*•\d\.]+\s*/, "").trim();
-    if (cleanTitle) {
-      tasks.push({
-        id: `task-${idCounter++}`,
-        title: cleanTitle,
-        priority,
-        reasoning: priority === "High" ? "Urgent timeline or critical item" : "Actionable task from notes"
-      });
-    }
+    tasks.push({
+      id: `task-${idCounter++}`,
+      title: cleanTitle,
+      priority,
+      reasoning: priority === "High" ? "Urgent timeline or critical item" : "Actionable task from notes"
+    });
 
     // Detect Calendar Events
     // 1. Tomorrow detection
@@ -203,14 +258,20 @@ CRITICAL CONTEXT:
 - Anchor Timestamp (NOW): ${anchorTimestamp}
 - User Timezone: ${timezone}
 
-RULES:
-1. Extract all actionable tasks. Assign priority: "High" (urgent, bugs, near-term deadlines), "Medium" (standard tasks, reviews, syncs), "Low" (backlog, nice-to-haves).
-2. Extract calendar events:
+RULES FOR ACTION ITEMS:
+1. ONLY extract actual actionable tasks that contain an actionable verb (e.g. fix, resolve, send, submit, review, schedule, prepare, draft, update, deploy, sync), an assigned person/owner (e.g. "Alice to update..."), or an explicit checklist item.
+2. STRICTLY IGNORE document titles, meeting headers, section intros, metadata, and lines ending with colons (e.g. "Team Sync & Sprint Wrap-up Notes:", "Agenda:", "Action Items:", "Meeting Notes:"). These are headers and organizational context, NEVER actionable tasks.
+3. Assign priority: "High" (urgent, bugs, near-term deadlines), "Medium" (standard tasks, reviews, syncs), "Low" (backlog, nice-to-haves).
+
+RULES FOR CALENDAR EVENTS:
+1. Extract calendar events:
    - For meetings without end time (e.g. "Monday 10 AM"): set duration to 30 minutes.
    - For deadlines (e.g. "due Friday 5 PM"): set 30-minute block ending at the deadline, with title prefixed with "[Deadline]".
    - For date-only items (no time specified): set isAllDay: true and startIso/endIso to "YYYY-MM-DD".
    - For timed events: output full ISO 8601 strings in UTC (e.g. "2026-10-26T10:00:00.000Z").
-3. OUTPUT FORMAT: Respond ONLY with a valid JSON object matching this schema with NO markdown codeblocks or extra text:
+2. DO NOT create calendar events out of document titles or general meeting headers.
+
+OUTPUT FORMAT: Respond ONLY with a valid JSON object matching this schema with NO markdown codeblocks or extra text:
 {
   "tasks": [
     { "id": "t1", "title": "string", "priority": "High" | "Medium" | "Low", "reasoning": "string" }

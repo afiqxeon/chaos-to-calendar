@@ -42,23 +42,23 @@ Build mode: fast
 ## Hands-on Checkpoints
 
 - [x] Early usable behavior explored — Slice 1 RFC 5545 calendar generator test verification
-- [ ] Final kick-the-tires exploration and feedback completed
+- [x] Final kick-the-tires exploration and feedback completed
 
 ## Final Review
 
-- [ ] Final review complete — feedback resolved and learner confirms ready to ship
+- [x] Final review complete — feedback resolved and learner confirms ready to ship
 
 ## Code Tour and App Map
 
-- [ ] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
-- [ ] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
-- [ ] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
+- [x] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
+- [x] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
+- [x] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
 
-Activity and evidence: [to be recorded upon completion]
-Route and stops: [to be recorded upon completion]
-Edit outcome: [to be recorded upon completion]
-Reflection: [to be recorded upon completion]
-Activity mode: [to be recorded upon completion]
+Activity and evidence: Focused alternative verifying spec-driven RFC 5545 alignment (tests/ics.test.ts) and Zod schema validation (server.ts), resolving network binding and proxy failover during final testing.
+Route and stops: src/utils/ics.ts (buildIcsContent), server.ts (/api/process & extractWithRuleEngine), src/App.tsx (handleProcessNotes)
+Edit outcome: Resolved host exposure on 0.0.0.0 and client failover route; verified passing by learner.
+Reflection: Already addressed — isolated verification of format-critical kernel before UI prevents drift.
+Activity mode: Live app verified in browser and standalone app map snapshot.
 
 ## Revisions
 

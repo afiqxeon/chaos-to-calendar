@@ -11,7 +11,18 @@ function extractWithRuleEngine(
   anchorDate: Date,
   timezone: string
 ): { tasks: ActionTask[]; events: CalendarEvent[] } {
-  const lines = notes.split(/\n+/).map(l => l.trim()).filter(Boolean);
+  // Support both bulleted lines and continuous conversational paragraphs
+  const rawSegments = notes.includes("\n")
+    ? notes.split(/\n+/).flatMap(l => {
+        // If line is not a bullet point and has multiple sentences, split into sentences
+        if (!/^[-*•\d\.]+\s+/.test(l) && l.includes(". ")) {
+          return l.split(/(?<=[.!?])\s+/);
+        }
+        return [l];
+      })
+    : notes.split(/(?<=[.!?])\s+/);
+
+  const lines = rawSegments.map(l => l.trim()).filter(Boolean);
   const tasks: ActionTask[] = [];
   const events: CalendarEvent[] = [];
 
@@ -32,34 +43,38 @@ function extractWithRuleEngine(
     "send", "email", "forward", "share",
     "submit", "file", "upload",
     "review", "audit", "check", "inspect",
-    "schedule", "hold", "host", "book", "set up",
+    "schedule", "hold", "host", "book", "set up", "jump on",
     "update", "edit", "revise", "rewrite",
-    "prepare", "draft", "write", "create",
+    "prepare", "prep", "draft", "write", "create",
     "deploy", "release", "ship", "merge",
-    "discuss", "sync", "meet", "call"
+    "discuss", "sync", "meet", "call",
+    "clean", "clean up", "renew", "refactor", "research", "buy", "pay"
   ];
 
   for (const line of lines) {
     const lower = line.toLowerCase();
 
-    // Rule 1: Strictly ignore document titles, meeting headers, metadata, and lines ending with colons
+    // Rule 1: Strictly ignore greetings, document titles, meeting headers, metadata, and lines ending with colons
     if (
-      line.endsWith(":") ||
+      (line.endsWith(":") && !lower.includes("reminder") && !lower.includes("todo")) ||
       lower.startsWith("#") ||
       lower.startsWith("title:") ||
-      lower.includes("meeting notes") ||
-      lower.includes("sprint wrap-up") ||
-      lower.includes("team sync notes") ||
+      lower.startsWith("hey team") ||
+      lower.startsWith("hi all") ||
+      lower.startsWith("hello team") ||
+      lower === "meeting notes" ||
+      lower === "team sync & sprint wrap-up notes:" ||
       lower.includes("agenda:") ||
       lower.includes("attendees:") ||
-      lower.includes("todos:") ||
       lower.includes("action items:")
     ) {
       continue;
     }
 
     const isBulleted = /^[-*•\d\.]+\s+/.test(line);
-    const cleanTitle = line.replace(/^[-*•\d\.]+\s*/, "").trim();
+    let cleanTitle = line.replace(/^[-*•\d\.]+\s*/, "").trim();
+    // Clean up conversational lead-ins if present
+    cleanTitle = cleanTitle.replace(/^(Hey team!\s*Quick reminder:\s*|Quick reminder:\s*|Also don't forget to\s*|Also make sure to\s*|Please\s*)/i, "").trim();
     if (!cleanTitle) continue;
 
     const lowerClean = cleanTitle.toLowerCase();
@@ -68,8 +83,8 @@ function extractWithRuleEngine(
     const hasActionVerb = actionVerbs.some(verb => 
       new RegExp(`\\b${verb}\\b`, "i").test(lowerClean)
     );
-    const hasAssignee = /^[A-Z][a-z]+\s+to\s+\w+/i.test(cleanTitle) || /\b(assigned to|owner:)/i.test(lowerClean);
-    const isExplicitTask = lowerClean.includes("todo") || lowerClean.includes("task") || lowerClean.includes("pr ") || lowerClean.includes("bug");
+    const hasAssignee = /^[A-Z][a-z]+,?\s+(please\s+)?(to\s+)?\w+/i.test(cleanTitle) || /\b(assigned to|owner:)/i.test(lowerClean);
+    const isExplicitTask = lowerClean.includes("todo") || lowerClean.includes("task") || lowerClean.includes("pr ") || lowerClean.includes("bug") || lowerClean.startsWith("i need to") || lowerClean.startsWith("need to");
 
     if (!isBulleted && !hasActionVerb && !hasAssignee && !isExplicitTask) {
       continue;
@@ -140,7 +155,7 @@ function extractWithRuleEngine(
     // 2. Day of week detection (e.g. Friday, Monday)
     else if (lower.includes("friday")) {
       const friday = getNextDayOfWeek(5, anchorDate);
-      const isDeadline = lower.includes("due") || lower.includes("by friday") || lower.includes("proposal");
+      const isDeadline = lower.includes("due") || lower.includes("by friday") || lower.includes("before friday") || lower.includes("proposal") || lower.includes("invoice") || lower.includes("pay");
 
       if (isDeadline) {
         // 30 min block ending at 5 PM (16:30 - 17:00) per PRD

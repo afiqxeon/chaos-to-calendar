@@ -62,3 +62,4 @@ All course planning documents and design artifacts are located under `devpost/`:
 - `devpost/spec.md`: Technical specification and data schemas
 - `devpost/checklist.md`: Verified incremental build slices and progress state
 - `devpost/app-map.html`: Standalone architecture map and code tour snapshot
+
